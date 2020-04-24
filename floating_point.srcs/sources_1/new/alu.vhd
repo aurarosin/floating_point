@@ -28,13 +28,13 @@ BEGIN
         
         CASE OPE IS
             WHEN "00" => -- Suma
-                VAR_OPE_RESUTL(LENGTH - 1 DOWNTO 0) := A + B;
+                VAR_OPE_RESUTL(LENGTH DOWNTO 0) := ('0' & A) + ('0' & B);
             WHEN "01" => -- Resta
-                VAR_OPE_RESUTL(LENGTH - 1 DOWNTO 0) := A - B;
+                VAR_OPE_RESUTL(LENGTH DOWNTO 0) := ('0' & A) - ('0' & B);
             WHEN "10" => -- Multiplicacion
                 VAR_OPE_RESUTL := A * B;
             WHEN OTHERS =>
-                VAR_OPE_RESUTL(LENGTH - 1 DOWNTO 0) := A;
+                VAR_OPE_RESUTL(LENGTH DOWNTO 0) := '0' & A;
         END CASE;
         
         FLAGS(0) <= VAR_OPE_RESUTL(LENGTH); -- C
