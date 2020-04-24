@@ -2,14 +2,14 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 
-entity datapath is
+entity floating_point is
     Port ( A : in STD_LOGIC_VECTOR (31 downto 0);
            B : in STD_LOGIC_VECTOR (31 downto 0);
            Ope : in STD_LOGIC_VECTOR (1 downto 0);
            Result : out STD_LOGIC_VECTOR (31 downto 0));
-end datapath;
+end floating_point;
 
-architecture Behavioral of datapath is
+architecture Behavioral of floating_point is
 
 component extender is
     Port ( i_data : in STD_LOGIC_VECTOR (22 downto 0);
