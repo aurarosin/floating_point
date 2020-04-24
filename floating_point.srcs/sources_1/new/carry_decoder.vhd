@@ -1,39 +1,11 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 23.04.2020 23:03:48
--- Design Name: 
--- Module Name: carry_decoder - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
+use ieee.numeric_std.all;               -- Needed for shifts
 
 entity carry_decoder is
-    Port ( mantissa : in STD_LOGIC_VECTOR (23 downto 0);
-           exponent : in STD_LOGIC_VECTOR (7 downto 0);
+    Port ( i_mantissa : in STD_LOGIC_VECTOR (23 downto 0);
+           i_exponent : in STD_LOGIC_VECTOR (7 downto 0);
            carry : in STD_LOGIC;
            o_mantissa : out STD_LOGIC_VECTOR (22 downto 0);
            o_exponent : out STD_LOGIC_VECTOR (7 downto 0));
@@ -43,5 +15,20 @@ architecture Behavioral of carry_decoder is
 
 begin
 
+    CARRY_PROC : PROCESS (i_mantissa, i_exponent, carry)
+        variable mantissa: std_logic_vector(23 downto 0);
+        variable exponent : std_logic_vector(7 downto 0);
+    BEGIN
+        IF carry = '1' THEN
+            mantissa := std_logic_vector(unsigned(i_mantissa) srl 1);
+            exponent := i_exponent + 1;
+        ELSE
+            mantissa := i_mantissa;
+            exponent := i_exponent;
+        END IF;
+        
+        o_mantissa <= mantissa(22 downto 0);
+        o_exponent <= exponent;
+    END PROCESS;
 
 end Behavioral;
