@@ -1,15 +1,16 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_SIGNED.ALL;
+USE ieee.numeric_std.ALL;
 
-
-entity floating_point is
+entity datapath is
     Port ( A : in STD_LOGIC_VECTOR (31 downto 0);
            B : in STD_LOGIC_VECTOR (31 downto 0);
            Ope : in STD_LOGIC_VECTOR (1 downto 0);
            Result : out STD_LOGIC_VECTOR (31 downto 0));
-end floating_point;
+end datapath;
 
-architecture Behavioral of floating_point is
+architecture Behavioral of datapath is
 
 component extender is
     Port ( i_data : in STD_LOGIC_VECTOR (22 downto 0);
@@ -38,6 +39,7 @@ component carry_decoder is
     Port ( i_mantissa : in STD_LOGIC_VECTOR (23 downto 0);
            i_exponent : in STD_LOGIC_VECTOR (7 downto 0);
            carry : in STD_LOGIC;
+           ope : in STD_LOGIC_vector(1 downto 0);
            o_mantissa : out STD_LOGIC_VECTOR (22 downto 0);
            o_exponent : out STD_LOGIC_VECTOR (7 downto 0));
 end component;
@@ -74,7 +76,6 @@ signal s_sum, s_sub, s_mul, s_res : STD_LOGIC;
 signal c_tmp, n_tmp : STD_LOGIC;
 signal n_shift_alu : STD_LOGIC_VECTOR(7 DOWNTO 0);
 signal alu_m_res : STD_LOGIC_VECTOR(23 DOWNTO 0);
- 
 
 begin
 
@@ -100,14 +101,14 @@ m_ext_sel_shift <= m_ext_A when n_flag = '1'
 
 bit_shift_pm : bit_shift port map (i_data => m_ext_sel_shift, n=>n_shift, o_data=> m_shift);
 
-ALU_ope : ALU generic map(24) port map(A=> m_ext_sel_alu, B => m_shift, OPE => Ope, RESULT_L => alu_res, FLAGS(0) => c_flag, FLAGS(1) => n_tmp);
-absol2_pm : absol generic map(24) port map(i_data => alu_res , o_data => alu_m_res);
+ALU_ope : ALU generic map(24) port map(A=> m_ext_sel_alu, B => m_shift, OPE => Ope, RESULT_L => alu_m_res, FLAGS(0) => c_flag, FLAGS(1) => n_tmp);
+--absol2_pm : absol generic map(24) port map(i_data => alu_res , o_data => alu_m_res);
 
 exp_sel <= exp_A when n_flag = '0'
     else
         exp_B;
         
-carry_dec :carry_decoder port map(i_mantissa =>alu_m_res, i_exponent => exp_sel, carry => c_flag, o_mantissa => m_res, o_exponent => exp_res); 
+carry_dec :carry_decoder port map(i_mantissa =>alu_m_res, i_exponent => exp_sel, carry => c_flag, ope => ope, o_mantissa => m_res, o_exponent => exp_res); 
 
 s_sum <= s_A when n_flag = '0'
     else
